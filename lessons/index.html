@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Notey — Lessons</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+            rel="stylesheet" />
+        <style>
+            /* CSS Variables */
+            :root {
+                --font-main: "DM Sans", system-ui, sans-serif;
+                --font-mono: "Space Mono", monospace;
+
+                --primary: #6366f1;
+                --primary-hover: #4f46e5;
+                --primary-light: #eef2ff;
+                --accent: #22d3ee;
+                --accent-dark: #0891b2;
+
+                --bg: #fafbfc;
+                --card-bg: #ffffff;
+                --text: #1e293b;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+
+                --danger: #ef4444;
+                --danger-bg: #fee2e2;
+
+                --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+                --shadow-xl: 0 20px 40px -5px rgba(0, 0, 0, 0.15);
+
+                --radius: 12px;
+                --radius-lg: 16px;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: var(--font-main);
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                min-height: 100vh;
+            }
+
+            header {
+                background: linear-gradient(135deg, var(--primary) 0%, var(--accent-dark) 100%);
+                color: #fff;
+                padding: 1.25rem 2rem;
+                box-shadow: var(--shadow-lg);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+                font-weight: 700;
+                font-family: var(--font-mono);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+                text-decoration: none;
+                color: #fff;
+            }
+
+            .logo::before {
+                content: "📚";
+                font-size: 1.75rem;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 2rem auto;
+                padding: 0 1.5rem;
+            }
+
+            .card {
+                background: var(--card-bg);
+                border-radius: var(--radius-lg);
+                padding: 2rem;
+                box-shadow: var(--shadow);
+                border: 1px solid var(--border);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            h2 {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                color: var(--text);
+            }
+
+            h3 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--text);
+            }
+
+            h4 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 0.75rem;
+                color: var(--text);
+            }
+
+            button,
+            .btn {
+                font-family: var(--font-main);
+                font-weight: 500;
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 1rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                text-decoration: none;
+                box-shadow: var(--shadow-sm);
+            }
+
+            button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--primary), var(--accent-dark));
+                color: #fff;
+            }
+
+            .btn-primary:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .btn-secondary {
+                background: var(--card-bg);
+                color: var(--primary);
+                border: 2px solid var(--primary);
+            }
+
+            .btn-secondary:hover:not(:disabled) {
+                background: var(--primary-light);
+            }
+
+            .btn-danger {
+                background: var(--danger-bg);
+                color: var(--danger);
+                border: 1px solid var(--danger);
+            }
+
+            .btn-danger:hover:not(:disabled) {
+                background: var(--danger);
+                color: #fff;
+            }
+
+            .btn-ai {
+                background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                color: #fff;
+            }
+
+            .btn-ai:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px -3px rgba(139, 92, 246, 0.4);
+            }
+
+            .btn-sm {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            input,
+            select,
+            textarea {
+                font-family: var(--font-main);
+                padding: 0.875rem 1rem;
+                border: 2px solid var(--border);
+                border-radius: var(--radius);
+                font-size: 1rem;
+                width: 100%;
+                transition: all 0.2s ease;
+                background: var(--card-bg);
+            }
+
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px var(--primary-light);
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 120px;
+                font-family: var(--font-main);
+                line-height: 1.6;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                color: var(--text);
+            }
+
+            .form-row {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .row {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .space-between {
+                justify-content: space-between;
+            }
+
+            .hidden {
+                display: none !important;
+            }
+
+            .grid-2 {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .item-card {
+                background: var(--card-bg);
+                border: 2px solid var(--border);
+                border-radius: var(--radius);
+                padding: 1.5rem;
+                transition: all 0.2s ease;
+                cursor: pointer;
+            }
+
+            .item-card:hover {
+                border-color: var(--primary);
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-2px);
+            }
+
+            .item-card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--text);
+            }
+
+            .item-card-meta {
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .item-card-actions {
+                display: flex;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+
+            .ai-section {
+                background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%);
+                border: 2px solid #d8b4fe;
+                border-radius: var(--radius-lg);
+                padding: 2rem;
+                margin-top: 2rem;
+            }
+
+            .ai-section h4 {
+                color: #7c3aed;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .ai-section h4::before {
+                content: "✨";
+                font-size: 1.5rem;
+            }
+
+            .ai-output {
+                background: white;
+                border-radius: var(--radius);
+                padding: 1.5rem;
+                margin-top: 1rem;
+                border: 1px solid #e9d5ff;
+                line-height: 1.7;
+                white-space: pre-wrap;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+
+            .ai-loading {
+                text-align: center;
+                padding: 2rem;
+                color: var(--text-muted);
+            }
+
+            .ai-loading::after {
+                content: "...";
+                animation: dots 1.5s steps(4, end) infinite;
+            }
+
+            @keyframes dots {
+                0%,
+                20% {
+                    content: ".";
+                }
+                40% {
+                    content: "..";
+                }
+                60%,
+                100% {
+                    content: "...";
+                }
+            }
+
+            .muted {
+                color: var(--text-muted);
+                font-size: 0.95rem;
+            }
+
+            .mb-2 {
+                margin-bottom: 1rem;
+            }
+            .mb-3 {
+                margin-bottom: 1.5rem;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 3rem 1rem;
+                color: var(--text-muted);
+            }
+
+            .empty-state-icon {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+                opacity: 0.5;
+            }
+
+            .breadcrumb {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 1.5rem;
+                color: var(--text-muted);
+                font-size: 0.9rem;
+            }
+
+            .breadcrumb a {
+                color: var(--text-muted);
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .breadcrumb a:hover {
+                color: var(--primary);
+            }
+
+            .breadcrumb-separator {
+                color: var(--border);
+            }
+
+            .breadcrumb-current {
+                color: var(--text);
+                font-weight: 500;
+            }
+
+            /* NEW: Formatting toolbar styles */
+            .formatting-toolbar {
+                background: var(--bg);
+                border: 2px solid var(--border);
+                border-radius: var(--radius);
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .toolbar-btn {
+                padding: 0.5rem 0.75rem;
+                border: 1px solid var(--border);
+                background: white;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                transition: all 0.2s;
+                min-width: 36px;
+                text-align: center;
+            }
+
+            .toolbar-btn:hover {
+                background: var(--primary-light);
+                border-color: var(--primary);
+            }
+
+            .toolbar-btn.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            .toolbar-separator {
+                width: 1px;
+                height: 24px;
+                background: var(--border);
+                margin: 0 0.25rem;
+            }
+
+            /* NEW: Search bar styles */
+            .search-container {
+                position: relative;
+                margin-bottom: 1rem;
+            }
+
+            .search-input {
+                padding-left: 2.5rem;
+            }
+
+            .search-icon {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                pointer-events: none;
+            }
+
+            .search-results {
+                background: var(--card-bg);
+                border: 2px solid var(--primary);
+                border-radius: var(--radius);
+                padding: 1rem;
+                margin-top: 0.5rem;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .search-result-item {
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+                background: var(--bg);
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .search-result-item:hover {
+                background: var(--primary-light);
+            }
+
+            .search-highlight {
+                background: #fef08a;
+                padding: 0.1rem 0.2rem;
+                border-radius: 3px;
+            }
+
+            .search-count {
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Enhanced note content area */
+            #note-content {
+                font-family: var(--font-main);
+                line-height: 1.8;
+                min-height: 400px;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .animate-in {
+                animation: slideIn 0.3s ease-out;
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    padding: 0 1rem;
+                }
+
+                .card {
+                    padding: 1.5rem;
+                }
+
+                h2 {
+                    font-size: 1.5rem;
+                }
+
+                .formatting-toolbar {
+                    padding: 0.5rem;
+                }
+
+                .toolbar-btn {
+                    padding: 0.4rem 0.6rem;
+                    font-size: 0.85rem;
+                    min-width: 32px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <a href="../index.html" class="logo">Notey</a>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Lessons View -->
+            <section id="view-lessons" class="animate-in">
+                <div class="card">
+                    <div class="breadcrumb">
+                        <a onclick="window.location.href='../index.html'">Classes</a>
+                        <span class="breadcrumb-separator">›</span>
+                        <span id="breadcrumb-class" class="breadcrumb-current">—</span>
+                    </div>
+
+                    <!-- NEW: Search bar for lessons -->
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input
+                            id="lesson-search"
+                            type="text"
+                            class="search-input"
+                            placeholder="Search lessons and notes..." />
+                    </div>
+                    <div id="lesson-search-results" class="hidden"></div>
+
+                    <div class="row space-between mb-3">
+                        <div>
+                            <h2 id="lessons-class-name">Class Name</h2>
+                            <p class="muted" id="lessons-class-meta">Class information</p>
+                        </div>
+                        <div class="row">
+                            <button id="btn-back-to-classes" class="btn-secondary btn-sm">← Back to Classes</button>
+                            <button id="btn-delete-class" class="btn-danger btn-sm">Delete Class</button>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0" />
+
+                    <h3>Lessons</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input id="lesson-date" type="date" />
+                        </div>
+                        <div class="form-group">
+                            <label>Lesson #</label>
+                            <input id="lesson-number" type="number" placeholder="1" />
+                        </div>
+                        <div class="form-group">
+                            <label>Week #</label>
+                            <input id="lesson-week" type="number" placeholder="1" />
+                        </div>
+                    </div>
+                    <button id="btn-add-lesson" class="btn-primary mb-3">Add Lesson</button>
+
+                    <div id="lessons-container" class="grid-2">
+                        <!-- Lessons will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson Detail View -->
+            <section id="view-lesson-detail" class="hidden animate-in">
+                <div class="card">
+                    <div class="breadcrumb">
+                        <a onclick="window.location.href='../index.html'">Classes</a>
+                        <span class="breadcrumb-separator">›</span>
+                        <a id="breadcrumb-class-2" onclick="showLessonsView()">—</a>
+                        <span class="breadcrumb-separator">›</span>
+                        <span id="breadcrumb-lesson" class="breadcrumb-current">—</span>
+                    </div>
+
+                    <div class="row space-between mb-3">
+                        <div>
+                            <h2 id="lesson-detail-title">Lesson</h2>
+                            <p class="muted" id="lesson-detail-meta">Lesson information</p>
+                        </div>
+                        <div class="row">
+                            <button id="btn-back-to-lessons" class="btn-secondary btn-sm">← Back to Lessons</button>
+                            <button id="btn-delete-lesson" class="btn-danger btn-sm">Delete Lesson</button>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0" />
+
+                    <h3>Notes</h3>
+
+                    <!-- NEW: Formatting toolbar -->
+                    <div class="formatting-toolbar">
+                        <button class="toolbar-btn" data-format="bold" title="Bold (Ctrl+B)"><strong>B</strong></button>
+                        <button class="toolbar-btn" data-format="italic" title="Italic (Ctrl+I)"><em>I</em></button>
+                        <button class="toolbar-btn" data-format="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+
+                        <div class="toolbar-separator"></div>
+
+                        <button class="toolbar-btn" data-format="h1" title="Heading 1">H1</button>
+                        <button class="toolbar-btn" data-format="h2" title="Heading 2">H2</button>
+                        <button class="toolbar-btn" data-format="h3" title="Heading 3">H3</button>
+
+                        <div class="toolbar-separator"></div>
+
+                        <button class="toolbar-btn" data-format="ul" title="Bullet List">• List</button>
+                        <button class="toolbar-btn" data-format="ol" title="Numbered List">1. List</button>
+
+                        <div class="toolbar-separator"></div>
+
+                        <button class="toolbar-btn" data-format="code" title="Code Block">&lt;/&gt;</button>
+                        <button class="toolbar-btn" data-format="quote" title="Quote">❝ Quote</button>
+
+                        <div class="toolbar-separator"></div>
+
+                        <button class="toolbar-btn" data-format="clear" title="Clear Formatting">⌫ Clear</button>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea id="note-content" rows="12" placeholder="Write your notes here..."></textarea>
+                    </div>
+                    <button id="btn-save-note" class="btn-primary">Save Notes</button>
+
+                    <!-- AI Section -->
+                    <div class="ai-section">
+                        <h4>AI Study Assistant</h4>
+                        <p class="muted mb-2">Get AI-powered help with your notes</p>
+
+                        <div class="row mb-2">
+                            <button id="btn-ai-summarize" class="btn-ai btn-sm">Summarize Notes</button>
+                            <button id="btn-ai-quiz" class="btn-ai btn-sm">Generate Quiz</button>
+                            <button id="btn-ai-explain" class="btn-ai btn-sm">Explain Concepts</button>
+                            <button id="btn-ai-studyguide" class="btn-ai btn-sm">Create Study Guide</button>
+                        </div>
+
+                        <div id="ai-output-container" class="hidden">
+                            <div id="ai-output" class="ai-output"></div>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0" />
+
+                    <h3>Attachments</h3>
+                    <div class="form-group">
+                        <input type="file" id="file-upload" multiple />
+                    </div>
+                    <button id="btn-upload" class="btn-secondary mb-2">Upload File(s)</button>
+                    <div id="attachments-list">
+                        <!-- Attachments will be loaded here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script type="module">
+            // ============================================================================
+            // FIREBASE CONFIGURATION
+            // ============================================================================
+            const firebaseConfig = {
+                apiKey: "AIzaSyCPU33ZcxWoS9NUaDEYJvNcB8FvVtdBTrg",
+                authDomain: "notey-4455f.firebaseapp.com",
+                projectId: "notey-4455f",
+                storageBucket: "notey-4455f.firebasestorage.app",
+                messagingSenderId: "554664934050",
+                appId: "1:554664934050:web:2e0a56b2dd0823cafa35fb",
+                measurementId: "G-L0RJKWNMN7"
+            };
+
+            // ============================================================================
+            // FIREBASE IMPORTS
+            // ============================================================================
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+            import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+            import {
+                getFirestore,
+                doc,
+                setDoc,
+                getDoc,
+                collection,
+                addDoc,
+                getDocs,
+                deleteDoc
+            } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+            import {
+                getStorage,
+                ref as storageRef,
+                uploadBytes,
+                getDownloadURL,
+                listAll,
+                deleteObject
+            } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const storage = getStorage(app);
+
+            // ============================================================================
+            // APPLICATION STATE
+            // ============================================================================
+            const state = {
+                currentUser: null,
+                currentClass: null,
+                currentLesson: null,
+                currentView: "lessons",
+                allLessons: [] // NEW: Store all lessons for search
+            };
+
+            // ============================================================================
+            // VIEW MANAGEMENT
+            // ============================================================================
+            const views = {
+                lessons: document.getElementById("view-lessons"),
+                lessonDetail: document.getElementById("view-lesson-detail")
+            };
+
+            function showView(viewName) {
+                Object.values(views).forEach((view) => view.classList.add("hidden"));
+                if (views[viewName]) {
+                    views[viewName].classList.remove("hidden");
+                    state.currentView = viewName;
+                }
+            }
+
+            window.showLessonsView = function () {
+                state.currentLesson = null;
+                showView("lessons");
+                loadLessons();
+            };
+
+            // ============================================================================
+            // UTILITY FUNCTIONS
+            // ============================================================================
+            function formatDate(timestamp) {
+                if (!timestamp) return "—";
+                const date = timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date(timestamp);
+                return date.toLocaleDateString();
+            }
+
+            // ============================================================================
+            // NEW: TEXT FORMATTING FUNCTIONS
+            // ============================================================================
+            function insertFormatting(format) {
+                const textarea = document.getElementById("note-content");
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                const beforeText = textarea.value.substring(0, start);
+                const afterText = textarea.value.substring(end);
+
+                let formattedText = "";
+                let cursorOffset = 0;
+
+                switch (format) {
+                    case "bold":
+                        formattedText = `**${selectedText || "bold text"}**`;
+                        cursorOffset = selectedText ? formattedText.length : 2;
+                        break;
+                    case "italic":
+                        formattedText = `*${selectedText || "italic text"}*`;
+                        cursorOffset = selectedText ? formattedText.length : 1;
+                        break;
+                    case "underline":
+                        formattedText = `__${selectedText || "underlined text"}__`;
+                        cursorOffset = selectedText ? formattedText.length : 2;
+                        break;
+                    case "h1":
+                        formattedText = `\n# ${selectedText || "Heading 1"}\n`;
+                        cursorOffset = selectedText ? formattedText.length : 2;
+                        break;
+                    case "h2":
+                        formattedText = `\n## ${selectedText || "Heading 2"}\n`;
+                        cursorOffset = selectedText ? formattedText.length : 3;
+                        break;
+                    case "h3":
+                        formattedText = `\n### ${selectedText || "Heading 3"}\n`;
+                        cursorOffset = selectedText ? formattedText.length : 4;
+                        break;
+                    case "ul":
+                        if (selectedText) {
+                            const lines = selectedText.split("\n");
+                            formattedText = "\n" + lines.map((line) => `• ${line}`).join("\n") + "\n";
+                        } else {
+                            formattedText = "\n• List item\n• List item\n• List item\n";
+                        }
+                        cursorOffset = formattedText.length;
+                        break;
+                    case "ol":
+                        if (selectedText) {
+                            const lines = selectedText.split("\n");
+                            formattedText = "\n" + lines.map((line, i) => `${i + 1}. ${line}`).join("\n") + "\n";
+                        } else {
+                            formattedText = "\n1. List item\n2. List item\n3. List item\n";
+                        }
+                        cursorOffset = formattedText.length;
+                        break;
+                    case "code":
+                        formattedText = `\`\`\`\n${selectedText || "code here"}\n\`\`\``;
+                        cursorOffset = selectedText ? formattedText.length : 4;
+                        break;
+                    case "quote":
+                        if (selectedText) {
+                            const lines = selectedText.split("\n");
+                            formattedText = "\n" + lines.map((line) => `> ${line}`).join("\n") + "\n";
+                        } else {
+                            formattedText = "\n> Quote text\n";
+                        }
+                        cursorOffset = formattedText.length;
+                        break;
+                    case "clear":
+                        formattedText = selectedText
+                            .replace(/\*\*/g, "")
+                            .replace(/\*/g, "")
+                            .replace(/__/g, "")
+                            .replace(/^#{1,6}\s/gm, "")
+                            .replace(/^[•\-]\s/gm, "")
+                            .replace(/^\d+\.\s/gm, "")
+                            .replace(/^>\s/gm, "")
+                            .replace(/```/g, "")
+                            .replace(/`/g, "");
+                        cursorOffset = formattedText.length;
+                        break;
+                }
+
+                textarea.value = beforeText + formattedText + afterText;
+                textarea.focus();
+                textarea.selectionStart = start + cursorOffset;
+                textarea.selectionEnd = start + cursorOffset;
+            }
+
+            // Setup formatting toolbar
+            document.querySelectorAll(".toolbar-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const format = btn.dataset.format;
+                    insertFormatting(format);
+                });
+            });
+
+            // Keyboard shortcuts
+            document.getElementById("note-content").addEventListener("keydown", (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key.toLowerCase()) {
+                        case "b":
+                            e.preventDefault();
+                            insertFormatting("bold");
+                            break;
+                        case "i":
+                            e.preventDefault();
+                            insertFormatting("italic");
+                            break;
+                        case "u":
+                            e.preventDefault();
+                            insertFormatting("underline");
+                            break;
+                    }
+                }
+            });
+
+            // ============================================================================
+            // NEW: SEARCH FUNCTIONALITY
+            // ============================================================================
+            async function searchLessons(query) {
+                if (!query.trim()) {
+                    document.getElementById("lesson-search-results").classList.add("hidden");
+                    return;
+                }
+
+                const resultsContainer = document.getElementById("lesson-search-results");
+                const searchTerm = query.toLowerCase();
+                const results = [];
+
+                // Search through all lessons and their notes
+                for (const lesson of state.allLessons) {
+                    try {
+                        // Get note content
+                        const noteDoc = await getDoc(
+                            doc(
+                                db,
+                                "users",
+                                state.currentUser.uid,
+                                "classes",
+                                state.currentClass.id,
+                                "lessons",
+                                lesson.id,
+                                "content",
+                                "note"
+                            )
+                        );
+
+                        const noteText = noteDoc.exists() ? noteDoc.data().text || "" : "";
+
+                        // Check if search term is in note content
+                        if (noteText.toLowerCase().includes(searchTerm)) {
+                            // Find context around the match
+                            const index = noteText.toLowerCase().indexOf(searchTerm);
+                            const start = Math.max(0, index - 50);
+                            const end = Math.min(noteText.length, index + searchTerm.length + 50);
+                            let context = noteText.substring(start, end);
+
+                            if (start > 0) context = "..." + context;
+                            if (end < noteText.length) context = context + "...";
+
+                            // Highlight the search term
+                            const regex = new RegExp(`(${query})`, "gi");
+                            context = context.replace(regex, '<span class="search-highlight">$1</span>');
+
+                            results.push({
+                                lesson: lesson,
+                                context: context
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error searching lesson:", error);
+                    }
+                }
+
+                // Display results
+                if (results.length > 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="search-results">
+                            <div class="search-count">${results.length} result${results.length !== 1 ? "s" : ""} found</div>
+                            ${results
+                                .map(
+                                    (result) => `
+                                <div class="search-result-item" data-lesson-id="${result.lesson.id}">
+                                    <strong>Lesson ${result.lesson.data.lessonNumber || "—"}</strong>
+                                    <div class="muted">${result.context}</div>
+                                </div>
+                            `
+                                )
+                                .join("")}
+                        </div>
+                    `;
+
+                    // Add click handlers to results
+                    resultsContainer.querySelectorAll(".search-result-item").forEach((item) => {
+                        item.addEventListener("click", async () => {
+                            const lessonId = item.dataset.lessonId;
+                            const lesson = state.allLessons.find((l) => l.id === lessonId);
+                            if (lesson) {
+                                openLesson(lesson.id, lesson.data);
+                                resultsContainer.classList.add("hidden");
+                                document.getElementById("lesson-search").value = "";
+                            }
+                        });
+                    });
+
+                    resultsContainer.classList.remove("hidden");
+                } else {
+                    resultsContainer.innerHTML = `
+                        <div class="search-results">
+                            <div class="muted">No results found for "${query}"</div>
+                        </div>
+                    `;
+                    resultsContainer.classList.remove("hidden");
+                }
+            }
+
+            // Debounce search input
+            let searchTimeout;
+            document.getElementById("lesson-search").addEventListener("input", (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    searchLessons(e.target.value);
+                }, 300);
+            });
+
+            // ============================================================================
+            // INITIALIZATION
+            // ============================================================================
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = "../index.html";
+                    return;
+                }
+
+                state.currentUser = user;
+
+                // Get class info from sessionStorage
+                const classData = sessionStorage.getItem("currentClass");
+                if (!classData) {
+                    window.location.href = "../index.html";
+                    return;
+                }
+
+                state.currentClass = JSON.parse(classData);
+                document.getElementById("breadcrumb-class").textContent = state.currentClass.name;
+                document.getElementById("breadcrumb-class-2").textContent = state.currentClass.name;
+                document.getElementById("lessons-class-name").textContent = state.currentClass.name;
+                document.getElementById("lessons-class-meta").textContent = `Class ID: ${state.currentClass.id}`;
+
+                loadLessons();
+            });
+
+            // ============================================================================
+            // LESSON MANAGEMENT
+            // ============================================================================
+            async function loadLessons() {
+                if (!state.currentClass) return;
+
+                const container = document.getElementById("lessons-container");
+                container.innerHTML = '<div class="muted">Loading lessons...</div>';
+
+                try {
+                    const lessonsRef = collection(
+                        db,
+                        "users",
+                        state.currentUser.uid,
+                        "classes",
+                        state.currentClass.id,
+                        "lessons"
+                    );
+                    const snapshot = await getDocs(lessonsRef);
+
+                    container.innerHTML = "";
+                    state.allLessons = []; // Clear and rebuild
+
+                    if (snapshot.empty) {
+                        container.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <div class="empty-state-icon">📝</div>
+              <p>No lessons yet. Add your first lesson above!</p>
+            </div>
+          `;
+                        return;
+                    }
+
+                    snapshot.forEach((docSnap) => {
+                        const lessonData = docSnap.data();
+                        state.allLessons.push({ id: docSnap.id, data: lessonData }); // Store for search
+
+                        const card = document.createElement("div");
+                        card.className = "item-card";
+                        card.innerHTML = `
+            <div class="item-card-title">Lesson ${lessonData.lessonNumber || "—"}</div>
+            <div class="item-card-meta">
+              ${formatDate(lessonData.date)} · Week ${lessonData.week || "—"}
+            </div>
+            <div class="item-card-actions">
+              <button class="btn-primary btn-sm open-lesson" data-id="${docSnap.id}">
+                Open →
+              </button>
+              <button class="btn-danger btn-sm delete-lesson" data-id="${docSnap.id}">
+                Delete
+              </button>
+            </div>
+          `;
+                        container.appendChild(card);
+                    });
+
+                    document.querySelectorAll(".open-lesson").forEach((btn) => {
+                        btn.addEventListener("click", async (e) => {
+                            const lessonId = e.target.dataset.id;
+                            const lessonDoc = await getDoc(
+                                doc(
+                                    db,
+                                    "users",
+                                    state.currentUser.uid,
+                                    "classes",
+                                    state.currentClass.id,
+                                    "lessons",
+                                    lessonId
+                                )
+                            );
+                            openLesson(lessonId, lessonDoc.data());
+                        });
+                    });
+
+                    document.querySelectorAll(".delete-lesson").forEach((btn) => {
+                        btn.addEventListener("click", async (e) => {
+                            if (confirm("Delete this lesson?")) {
+                                try {
+                                    await deleteDoc(
+                                        doc(
+                                            db,
+                                            "users",
+                                            state.currentUser.uid,
+                                            "classes",
+                                            state.currentClass.id,
+                                            "lessons",
+                                            e.target.dataset.id
+                                        )
+                                    );
+                                    loadLessons();
+                                } catch (error) {
+                                    console.error("Delete lesson error:", error);
+                                    alert("Error deleting lesson");
+                                }
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error("Error loading lessons:", error);
+                    container.innerHTML = '<div class="muted">Error loading lessons</div>';
+                }
+            }
+
+            document.getElementById("btn-add-lesson").addEventListener("click", async () => {
+                if (!state.currentClass) {
+                    alert("Please open a class first");
+                    return;
+                }
+
+                const lessonData = {
+                    date: document.getElementById("lesson-date").value
+                        ? new Date(document.getElementById("lesson-date").value)
+                        : null,
+                    lessonNumber: document.getElementById("lesson-number").value || null,
+                    week: document.getElementById("lesson-week").value || null,
+                    createdAt: new Date()
+                };
+
+                try {
+                    await addDoc(
+                        collection(db, "users", state.currentUser.uid, "classes", state.currentClass.id, "lessons"),
+                        lessonData
+                    );
+
+                    document.getElementById("lesson-date").value = "";
+                    document.getElementById("lesson-number").value = "";
+                    document.getElementById("lesson-week").value = "";
+
+                    loadLessons();
+                } catch (error) {
+                    console.error("Add lesson error:", error);
+                    alert("Error adding lesson");
+                }
+            });
+
+            document.getElementById("btn-back-to-classes").addEventListener("click", () => {
+                window.location.href = "../index.html";
+            });
+
+            document.getElementById("btn-delete-class").addEventListener("click", async () => {
+                if (!state.currentClass) return;
+
+                if (confirm(`Delete "${state.currentClass.name}" and all its lessons?`)) {
+                    try {
+                        await deleteDoc(doc(db, "users", state.currentUser.uid, "classes", state.currentClass.id));
+                        window.location.href = "../index.html";
+                    } catch (error) {
+                        console.error("Delete class error:", error);
+                        alert("Error deleting class");
+                    }
+                }
+            });
+
+            // ============================================================================
+            // LESSON DETAIL
+            // ============================================================================
+            async function openLesson(lessonId, lessonData) {
+                state.currentLesson = { id: lessonId, ...lessonData };
+
+                document.getElementById("breadcrumb-lesson").textContent = `Lesson ${lessonData.lessonNumber || "—"}`;
+                document.getElementById("lesson-detail-title").textContent = `Lesson ${lessonData.lessonNumber || "—"}`;
+                document.getElementById("lesson-detail-meta").textContent =
+                    `${formatDate(lessonData.date)} · Week ${lessonData.week || "—"}`;
+
+                // Load note content
+                try {
+                    const noteDoc = await getDoc(
+                        doc(
+                            db,
+                            "users",
+                            state.currentUser.uid,
+                            "classes",
+                            state.currentClass.id,
+                            "lessons",
+                            lessonId,
+                            "content",
+                            "note"
+                        )
+                    );
+
+                    document.getElementById("note-content").value = noteDoc.exists() ? noteDoc.data().text || "" : "";
+                } catch (error) {
+                    console.error("Error loading note:", error);
+                    document.getElementById("note-content").value = "";
+                }
+
+                showView("lessonDetail");
+                loadAttachments();
+            }
+
+            document.getElementById("btn-save-note").addEventListener("click", async () => {
+                if (!state.currentLesson) {
+                    alert("Please open a lesson first");
+                    return;
+                }
+
+                try {
+                    await setDoc(
+                        doc(
+                            db,
+                            "users",
+                            state.currentUser.uid,
+                            "classes",
+                            state.currentClass.id,
+                            "lessons",
+                            state.currentLesson.id,
+                            "content",
+                            "note"
+                        ),
+                        {
+                            text: document.getElementById("note-content").value,
+                            updatedAt: new Date()
+                        }
+                    );
+
+                    alert("Note saved!");
+                } catch (error) {
+                    console.error("Save note error:", error);
+                    alert("Error saving note");
+                }
+            });
+
+            document.getElementById("btn-back-to-lessons").addEventListener("click", () => {
+                state.currentLesson = null;
+                showView("lessons");
+                loadLessons();
+            });
+
+            document.getElementById("btn-delete-lesson").addEventListener("click", async () => {
+                if (!state.currentLesson) return;
+
+                if (confirm("Delete this lesson?")) {
+                    try {
+                        await deleteDoc(
+                            doc(
+                                db,
+                                "users",
+                                state.currentUser.uid,
+                                "classes",
+                                state.currentClass.id,
+                                "lessons",
+                                state.currentLesson.id
+                            )
+                        );
+
+                        state.currentLesson = null;
+                        showView("lessons");
+                        loadLessons();
+                    } catch (error) {
+                        console.error("Delete lesson error:", error);
+                        alert("Error deleting lesson");
+                    }
+                }
+            });
+
+            // ============================================================================
+            // ATTACHMENTS
+            // ============================================================================
+            async function loadAttachments() {
+                if (!state.currentLesson) return;
+
+                const container = document.getElementById("attachments-list");
+                container.innerHTML = '<div class="muted">Loading files...</div>';
+
+                try {
+                    const attachRef = storageRef(
+                        storage,
+                        `users/${state.currentUser.uid}/classes/${state.currentClass.id}/lessons/${state.currentLesson.id}/`
+                    );
+                    const filesList = await listAll(attachRef);
+
+                    container.innerHTML = "";
+
+                    if (filesList.items.length === 0) {
+                        container.innerHTML = '<div class="muted">No attachments yet</div>';
+                        return;
+                    }
+
+                    for (const item of filesList.items) {
+                        const url = await getDownloadURL(item);
+                        const fileCard = document.createElement("div");
+                        fileCard.className = "item-card";
+                        fileCard.innerHTML = `
+            <div class="item-card-title">📎 ${item.name}</div>
+            <div class="item-card-actions">
+              <a href="${url}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-sm" style="text-decoration: none;">
+                Download
+              </a>
+              <button class="btn-danger btn-sm delete-file" data-path="${item.fullPath}">
+                Delete
+              </button>
+            </div>
+          `;
+                        container.appendChild(fileCard);
+                    }
+
+                    // Add delete listeners
+                    document.querySelectorAll(".delete-file").forEach((btn) => {
+                        btn.addEventListener("click", async (e) => {
+                            if (confirm("Delete this file?")) {
+                                try {
+                                    const fileRef = storageRef(storage, e.target.dataset.path);
+                                    await deleteObject(fileRef);
+                                    await loadAttachments();
+                                } catch (error) {
+                                    console.error("Delete file error:", error);
+                                    alert("Error deleting file");
+                                }
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error("Error loading attachments:", error);
+                    container.innerHTML = '<div class="muted">No attachments or error loading</div>';
+                }
+            }
+
+            document.getElementById("btn-upload").addEventListener("click", async () => {
+                if (!state.currentLesson) {
+                    alert("Please open a lesson first");
+                    return;
+                }
+
+                const files = document.getElementById("file-upload").files;
+                if (files.length === 0) {
+                    alert("Please choose at least one file");
+                    return;
+                }
+
+                try {
+                    const uploadPromises = [];
+                    for (const file of files) {
+                        const path = `users/${state.currentUser.uid}/classes/${state.currentClass.id}/lessons/${state.currentLesson.id}/${file.name}`;
+                        const fileRef = storageRef(storage, path);
+                        uploadPromises.push(uploadBytes(fileRef, file));
+                    }
+
+                    await Promise.all(uploadPromises);
+                    alert(`${files.length} file(s) uploaded!`);
+
+                    document.getElementById("file-upload").value = "";
+                    await loadAttachments();
+                } catch (error) {
+                    console.error("Upload error:", error);
+                    alert("Error uploading file(s): " + error.message);
+                }
+            });
+
+            // ============================================================================
+            // AI FEATURES
+            // ============================================================================
+            async function callClaudeAPI(prompt) {
+                try {
+                    const response = await fetch("https://api.anthropic.com/v1/messages", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            model: "claude-sonnet-4-20250514",
+                            max_tokens: 1000,
+                            messages: [{ role: "user", content: prompt }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    return data.content.find((item) => item.type === "text")?.text || "No response";
+                } catch (error) {
+                    console.error("AI API error:", error);
+                    return "Error calling AI. Please try again.";
+                }
+            }
+
+            function showAIOutput(text) {
+                const container = document.getElementById("ai-output-container");
+                const output = document.getElementById("ai-output");
+                container.classList.remove("hidden");
+                output.textContent = text;
+            }
+
+            function showAILoading() {
+                const container = document.getElementById("ai-output-container");
+                const output = document.getElementById("ai-output");
+                container.classList.remove("hidden");
+                output.innerHTML = '<div class="ai-loading">Thinking</div>';
+            }
+
+            document.getElementById("btn-ai-summarize").addEventListener("click", async () => {
+                const notes = document.getElementById("note-content").value;
+                if (!notes.trim()) {
+                    alert("Please write some notes first!");
+                    return;
+                }
+
+                showAILoading();
+                const prompt = `Please provide a concise summary of these study notes:\n\n${notes}`;
+                const result = await callClaudeAPI(prompt);
+                showAIOutput(result);
+            });
+
+            document.getElementById("btn-ai-quiz").addEventListener("click", async () => {
+                const notes = document.getElementById("note-content").value;
+                if (!notes.trim()) {
+                    alert("Please write some notes first!");
+                    return;
+                }
+
+                showAILoading();
+                const prompt = `Based on these study notes, create 5 quiz questions with answers:\n\n${notes}`;
+                const result = await callClaudeAPI(prompt);
+                showAIOutput(result);
+            });
+
+            document.getElementById("btn-ai-explain").addEventListener("click", async () => {
+                const notes = document.getElementById("note-content").value;
+                if (!notes.trim()) {
+                    alert("Please write some notes first!");
+                    return;
+                }
+
+                showAILoading();
+                const prompt = `Please explain the key concepts in these notes in simple terms:\n\n${notes}`;
+                const result = await callClaudeAPI(prompt);
+                showAIOutput(result);
+            });
+
+            document.getElementById("btn-ai-studyguide").addEventListener("click", async () => {
+                const notes = document.getElementById("note-content").value;
+                if (!notes.trim()) {
+                    alert("Please write some notes first!");
+                    return;
+                }
+
+                showAILoading();
+                const prompt = `Create a comprehensive study guide based on these notes, including key points, important terms, and concepts to review:\n\n${notes}`;
+                const result = await callClaudeAPI(prompt);
+                showAIOutput(result);
+            });
+
+            console.log("Notey lessons page loaded successfully!");
+        </script>
+    </body>
+</html>
