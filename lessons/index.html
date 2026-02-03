@@ -338,9 +338,17 @@
             }
 
             @keyframes dots {
-                0%, 20% { content: "."; }
-                40% { content: ".."; }
-                60%, 100% { content: "..."; }
+                0%,
+                20% {
+                    content: ".";
+                }
+                40% {
+                    content: "..";
+                }
+                60%,
+                100% {
+                    content: "...";
+                }
             }
 
             .muted {
@@ -395,7 +403,7 @@
                 font-weight: 500;
             }
 
-            /* Formatting toolbar styles */
+            /* NEW: Formatting toolbar styles */
             .formatting-toolbar {
                 background: var(--bg);
                 border: 2px solid var(--border);
@@ -438,7 +446,7 @@
                 margin: 0 0.25rem;
             }
 
-            /* Search bar styles */
+            /* NEW: Search bar styles */
             .search-container {
                 position: relative;
                 margin-bottom: 1rem;
@@ -492,92 +500,39 @@
                 margin-bottom: 0.5rem;
             }
 
-            /* Rich Text Editor Styles */
+            /* Enhanced note content area */
             #note-content {
-                min-height: 400px;
-                padding: 1rem;
-                border: 2px solid var(--border);
-                border-radius: var(--radius);
                 font-family: var(--font-main);
-                font-size: 1rem;
                 line-height: 1.8;
-                overflow-y: auto;
-                background: white;
-                color: var(--text);
+                min-height: 400px;
             }
 
-            #note-content:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px var(--primary-light);
-            }
-
-            /* Rich text formatting within contenteditable */
-            #note-content h1 {
-                font-size: 2rem;
-                font-weight: 700;
-                margin: 1rem 0 0.5rem 0;
-                color: var(--text);
-            }
-
-            #note-content h2 {
-                font-size: 1.75rem;
-                font-weight: 600;
-                margin: 1rem 0 0.5rem 0;
-                color: var(--text);
-            }
-
-            #note-content h3 {
-                font-size: 1.5rem;
-                font-weight: 600;
-                margin: 1rem 0 0.5rem 0;
-                color: var(--text);
-            }
-
-            #note-content ul {
-                margin: 0.5rem 0;
-                padding-left: 2rem;
-            }
-
-            #note-content ol {
-                margin: 0.5rem 0;
-                padding-left: 2rem;
-            }
-
-            #note-content li {
-                margin: 0.25rem 0;
-            }
-
-            #note-content blockquote {
-                border-left: 4px solid var(--primary);
-                padding-left: 1rem;
-                margin: 1rem 0;
-                color: var(--text-muted);
-                font-style: italic;
-            }
-
-            #note-content code {
-                background: var(--bg);
-                padding: 0.2rem 0.4rem;
-                border-radius: 4px;
-                font-family: var(--font-mono);
-                font-size: 0.9em;
-                color: #e11d48;
-            }
-
-            #note-content pre {
-                background: var(--bg);
+            /* Upload progress indicator */
+            .upload-progress {
+                margin-top: 1rem;
                 padding: 1rem;
+                background: var(--primary-light);
                 border-radius: var(--radius);
-                overflow-x: auto;
-                margin: 1rem 0;
-                border: 1px solid var(--border);
+                display: none;
             }
 
-            #note-content pre code {
-                background: none;
-                padding: 0;
-                color: var(--text);
+            .upload-progress.active {
+                display: block;
+            }
+
+            .progress-bar {
+                width: 100%;
+                height: 8px;
+                background: var(--border);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-top: 0.5rem;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--primary);
+                transition: width 0.3s ease;
             }
 
             @keyframes slideIn {
@@ -637,15 +592,14 @@
                         <span id="breadcrumb-class" class="breadcrumb-current">—</span>
                     </div>
 
-                    <!-- Search bar for lessons -->
+                    <!-- NEW: Search bar for lessons -->
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
-                        <input 
-                            id="lesson-search" 
-                            type="text" 
-                            class="search-input" 
-                            placeholder="Search lessons and notes..." 
-                        />
+                        <input
+                            id="lesson-search"
+                            type="text"
+                            class="search-input"
+                            placeholder="Search lessons and notes..." />
                     </div>
                     <div id="lesson-search-results" class="hidden"></div>
 
@@ -710,32 +664,36 @@
                     <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0" />
 
                     <h3>Notes</h3>
-                    
-                    <!-- Formatting toolbar -->
+
+                    <!-- NEW: Formatting toolbar -->
                     <div class="formatting-toolbar">
-                        <button class="toolbar-btn" data-command="bold" title="Bold (Ctrl+B)"><strong>B</strong></button>
-                        <button class="toolbar-btn" data-command="italic" title="Italic (Ctrl+I)"><em>I</em></button>
-                        <button class="toolbar-btn" data-command="underline" title="Underline (Ctrl+U)"><u>U</u></button>
-                        
+                        <button class="toolbar-btn" data-format="bold" title="Bold (Ctrl+B)"><strong>B</strong></button>
+                        <button class="toolbar-btn" data-format="italic" title="Italic (Ctrl+I)"><em>I</em></button>
+                        <button class="toolbar-btn" data-format="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+
                         <div class="toolbar-separator"></div>
-                        
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h1" title="Heading 1">H1</button>
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h2" title="Heading 2">H2</button>
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h3" title="Heading 3">H3</button>
-                        
+
+                        <button class="toolbar-btn" data-format="h1" title="Heading 1">H1</button>
+                        <button class="toolbar-btn" data-format="h2" title="Heading 2">H2</button>
+                        <button class="toolbar-btn" data-format="h3" title="Heading 3">H3</button>
+
                         <div class="toolbar-separator"></div>
-                        
-                        <button class="toolbar-btn" data-command="insertUnorderedList" title="Bullet List">• List</button>
-                        <button class="toolbar-btn" data-command="insertOrderedList" title="Numbered List">1. List</button>
-                        
+
+                        <button class="toolbar-btn" data-format="ul" title="Bullet List">• List</button>
+                        <button class="toolbar-btn" data-format="ol" title="Numbered List">1. List</button>
+
                         <div class="toolbar-separator"></div>
-                        
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="blockquote" title="Quote">❝ Quote</button>
-                        <button class="toolbar-btn" data-command="removeFormat" title="Clear Formatting">⌫ Clear</button>
+
+                        <button class="toolbar-btn" data-format="code" title="Code Block">&lt;/&gt;</button>
+                        <button class="toolbar-btn" data-format="quote" title="Quote">❝ Quote</button>
+
+                        <div class="toolbar-separator"></div>
+
+                        <button class="toolbar-btn" data-format="clear" title="Clear Formatting">⌫ Clear</button>
                     </div>
 
                     <div class="form-group">
-                        <div id="note-content" contenteditable="true" spellcheck="true"></div>
+                        <textarea id="note-content" rows="12" placeholder="Write your notes here..."></textarea>
                     </div>
                     <button id="btn-save-note" class="btn-primary">Save Notes</button>
 
@@ -763,6 +721,14 @@
                         <input type="file" id="file-upload" multiple />
                     </div>
                     <button id="btn-upload" class="btn-secondary mb-2">Upload File(s)</button>
+                    
+                    <div id="upload-progress" class="upload-progress">
+                        <div class="muted">Uploading files...</div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
                     <div id="attachments-list">
                         <!-- Attachments will be loaded here -->
                     </div>
@@ -785,7 +751,14 @@
             };
 
             // ============================================================================
-            // FIREBASE IMPORTS
+            // CLOUDINARY CONFIGURATION
+            // ============================================================================
+            const CLOUDINARY_CLOUD_NAME = "dyzjztnym";
+            const CLOUDINARY_UPLOAD_PRESET = "School";
+            const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+
+            // ============================================================================
+            // FIREBASE IMPORTS (No Storage imports needed)
             // ============================================================================
             import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
             import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
@@ -797,21 +770,15 @@
                 collection,
                 addDoc,
                 getDocs,
-                deleteDoc
+                deleteDoc,
+                updateDoc,
+                arrayUnion,
+                arrayRemove
             } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-            import {
-                getStorage,
-                ref as storageRef,
-                uploadBytes,
-                getDownloadURL,
-                listAll,
-                deleteObject
-            } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
             const db = getFirestore(app);
-            const storage = getStorage(app);
 
             // ============================================================================
             // APPLICATION STATE
@@ -821,7 +788,7 @@
                 currentClass: null,
                 currentLesson: null,
                 currentView: "lessons",
-                allLessons: []
+                allLessons: [] // NEW: Store all lessons for search
             };
 
             // ============================================================================
@@ -840,7 +807,7 @@
                 }
             }
 
-            window.showLessonsView = function() {
+            window.showLessonsView = function () {
                 state.currentLesson = null;
                 showView("lessons");
                 loadLessons();
@@ -856,101 +823,135 @@
             }
 
             // ============================================================================
-            // RICH TEXT EDITOR FUNCTIONS
+            // NEW: TEXT FORMATTING FUNCTIONS
             // ============================================================================
-            const noteEditor = document.getElementById('note-content');
+            function insertFormatting(format) {
+                const textarea = document.getElementById("note-content");
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                const beforeText = textarea.value.substring(0, start);
+                const afterText = textarea.value.substring(end);
+
+                let formattedText = "";
+                let cursorOffset = 0;
+
+                switch (format) {
+                    case "bold":
+                        formattedText = `**${selectedText || "bold text"}**`;
+                        cursorOffset = selectedText ? formattedText.length : 2;
+                        break;
+                    case "italic":
+                        formattedText = `*${selectedText || "italic text"}*`;
+                        cursorOffset = selectedText ? formattedText.length : 1;
+                        break;
+                    case "underline":
+                        formattedText = `__${selectedText || "underlined text"}__`;
+                        cursorOffset = selectedText ? formattedText.length : 2;
+                        break;
+                    case "h1":
+                        formattedText = `\n# ${selectedText || "Heading 1"}\n`;
+                        cursorOffset = selectedText ? formattedText.length : 2;
+                        break;
+                    case "h2":
+                        formattedText = `\n## ${selectedText || "Heading 2"}\n`;
+                        cursorOffset = selectedText ? formattedText.length : 3;
+                        break;
+                    case "h3":
+                        formattedText = `\n### ${selectedText || "Heading 3"}\n`;
+                        cursorOffset = selectedText ? formattedText.length : 4;
+                        break;
+                    case "ul":
+                        if (selectedText) {
+                            const lines = selectedText.split("\n");
+                            formattedText = "\n" + lines.map((line) => `• ${line}`).join("\n") + "\n";
+                        } else {
+                            formattedText = "\n• List item\n• List item\n• List item\n";
+                        }
+                        cursorOffset = formattedText.length;
+                        break;
+                    case "ol":
+                        if (selectedText) {
+                            const lines = selectedText.split("\n");
+                            formattedText = "\n" + lines.map((line, i) => `${i + 1}. ${line}`).join("\n") + "\n";
+                        } else {
+                            formattedText = "\n1. List item\n2. List item\n3. List item\n";
+                        }
+                        cursorOffset = formattedText.length;
+                        break;
+                    case "code":
+                        formattedText = `\`\`\`\n${selectedText || "code here"}\n\`\`\``;
+                        cursorOffset = selectedText ? formattedText.length : 4;
+                        break;
+                    case "quote":
+                        if (selectedText) {
+                            const lines = selectedText.split("\n");
+                            formattedText = "\n" + lines.map((line) => `> ${line}`).join("\n") + "\n";
+                        } else {
+                            formattedText = "\n> Quote text\n";
+                        }
+                        cursorOffset = formattedText.length;
+                        break;
+                    case "clear":
+                        formattedText = selectedText
+                            .replace(/\*\*/g, "")
+                            .replace(/\*/g, "")
+                            .replace(/__/g, "")
+                            .replace(/^#{1,6}\s/gm, "")
+                            .replace(/^[•\-]\s/gm, "")
+                            .replace(/^\d+\.\s/gm, "")
+                            .replace(/^>\s/gm, "")
+                            .replace(/```/g, "")
+                            .replace(/`/g, "");
+                        cursorOffset = formattedText.length;
+                        break;
+                }
+
+                textarea.value = beforeText + formattedText + afterText;
+                textarea.focus();
+                textarea.selectionStart = start + cursorOffset;
+                textarea.selectionEnd = start + cursorOffset;
+            }
 
             // Setup formatting toolbar
-            document.querySelectorAll('.toolbar-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+            document.querySelectorAll(".toolbar-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    const command = btn.dataset.command;
-                    const value = btn.dataset.value || null;
-                    
-                    // Ensure editor is focused
-                    noteEditor.focus();
-                    
-                    // Execute formatting command
-                    if (value) {
-                        document.execCommand(command, false, value);
-                    } else {
-                        document.execCommand(command, false, null);
-                    }
-                    
-                    // Update active states
-                    updateToolbarState();
+                    const format = btn.dataset.format;
+                    insertFormatting(format);
                 });
             });
 
-            // Update toolbar button states based on current selection
-            function updateToolbarState() {
-                document.querySelectorAll('.toolbar-btn').forEach(btn => {
-                    const command = btn.dataset.command;
-                    
-                    // Check if command is currently active
-                    if (command === 'bold' || command === 'italic' || command === 'underline') {
-                        if (document.queryCommandState(command)) {
-                            btn.classList.add('active');
-                        } else {
-                            btn.classList.remove('active');
-                        }
+            // Keyboard shortcuts
+            document.getElementById("note-content").addEventListener("keydown", (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key.toLowerCase()) {
+                        case "b":
+                            e.preventDefault();
+                            insertFormatting("bold");
+                            break;
+                        case "i":
+                            e.preventDefault();
+                            insertFormatting("italic");
+                            break;
+                        case "u":
+                            e.preventDefault();
+                            insertFormatting("underline");
+                            break;
                     }
-                });
-            }
-
-            // Listen for selection changes
-            noteEditor.addEventListener('mouseup', updateToolbarState);
-            noteEditor.addEventListener('keyup', updateToolbarState);
-
-            // Prevent default formatting on paste - keep it clean
-            noteEditor.addEventListener('paste', (e) => {
-                e.preventDefault();
-                const text = e.clipboardData.getData('text/plain');
-                document.execCommand('insertText', false, text);
-            });
-
-            // Placeholder behavior
-            noteEditor.addEventListener('focus', () => {
-                if (noteEditor.textContent.trim() === '') {
-                    noteEditor.textContent = '';
                 }
             });
-
-            noteEditor.addEventListener('blur', () => {
-                if (noteEditor.textContent.trim() === '') {
-                    noteEditor.innerHTML = '<p><br></p>';
-                }
-            });
-
-            // Helper function to get plain text content from editor
-            function getEditorPlainText() {
-                return noteEditor.innerText || noteEditor.textContent || '';
-            }
-
-            // Helper function to get HTML content from editor
-            function getEditorHTML() {
-                return noteEditor.innerHTML;
-            }
-
-            // Helper function to set editor content
-            function setEditorContent(html) {
-                if (!html || html.trim() === '') {
-                    noteEditor.innerHTML = '<p><br></p>';
-                } else {
-                    noteEditor.innerHTML = html;
-                }
-            }
 
             // ============================================================================
-            // SEARCH FUNCTIONALITY
+            // NEW: SEARCH FUNCTIONALITY
             // ============================================================================
             async function searchLessons(query) {
                 if (!query.trim()) {
-                    document.getElementById('lesson-search-results').classList.add('hidden');
+                    document.getElementById("lesson-search-results").classList.add("hidden");
                     return;
                 }
 
-                const resultsContainer = document.getElementById('lesson-search-results');
+                const resultsContainer = document.getElementById("lesson-search-results");
                 const searchTerm = query.toLowerCase();
                 const results = [];
 
@@ -972,12 +973,8 @@
                             )
                         );
 
-                        const noteHTML = noteDoc.exists() ? noteDoc.data().html || "" : "";
-                        // Create a temporary div to extract text from HTML
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = noteHTML;
-                        const noteText = tempDiv.textContent || tempDiv.innerText || "";
-                        
+                        const noteText = noteDoc.exists() ? noteDoc.data().text || "" : "";
+
                         // Check if search term is in note content
                         if (noteText.toLowerCase().includes(searchTerm)) {
                             // Find context around the match
@@ -985,14 +982,14 @@
                             const start = Math.max(0, index - 50);
                             const end = Math.min(noteText.length, index + searchTerm.length + 50);
                             let context = noteText.substring(start, end);
-                            
+
                             if (start > 0) context = "..." + context;
                             if (end < noteText.length) context = context + "...";
-                            
+
                             // Highlight the search term
-                            const regex = new RegExp(`(${query})`, 'gi');
+                            const regex = new RegExp(`(${query})`, "gi");
                             context = context.replace(regex, '<span class="search-highlight">$1</span>');
-                            
+
                             results.push({
                                 lesson: lesson,
                                 context: context
@@ -1007,43 +1004,47 @@
                 if (results.length > 0) {
                     resultsContainer.innerHTML = `
                         <div class="search-results">
-                            <div class="search-count">${results.length} result${results.length !== 1 ? 's' : ''} found</div>
-                            ${results.map(result => `
+                            <div class="search-count">${results.length} result${results.length !== 1 ? "s" : ""} found</div>
+                            ${results
+                                .map(
+                                    (result) => `
                                 <div class="search-result-item" data-lesson-id="${result.lesson.id}">
                                     <strong>Lesson ${result.lesson.data.lessonNumber || "—"}</strong>
                                     <div class="muted">${result.context}</div>
                                 </div>
-                            `).join('')}
+                            `
+                                )
+                                .join("")}
                         </div>
                     `;
-                    
+
                     // Add click handlers to results
-                    resultsContainer.querySelectorAll('.search-result-item').forEach(item => {
-                        item.addEventListener('click', async () => {
+                    resultsContainer.querySelectorAll(".search-result-item").forEach((item) => {
+                        item.addEventListener("click", async () => {
                             const lessonId = item.dataset.lessonId;
-                            const lesson = state.allLessons.find(l => l.id === lessonId);
+                            const lesson = state.allLessons.find((l) => l.id === lessonId);
                             if (lesson) {
                                 openLesson(lesson.id, lesson.data);
-                                resultsContainer.classList.add('hidden');
-                                document.getElementById('lesson-search').value = '';
+                                resultsContainer.classList.add("hidden");
+                                document.getElementById("lesson-search").value = "";
                             }
                         });
                     });
-                    
-                    resultsContainer.classList.remove('hidden');
+
+                    resultsContainer.classList.remove("hidden");
                 } else {
                     resultsContainer.innerHTML = `
                         <div class="search-results">
                             <div class="muted">No results found for "${query}"</div>
                         </div>
                     `;
-                    resultsContainer.classList.remove('hidden');
+                    resultsContainer.classList.remove("hidden");
                 }
             }
 
             // Debounce search input
             let searchTimeout;
-            document.getElementById('lesson-search').addEventListener('input', (e) => {
+            document.getElementById("lesson-search").addEventListener("input", (e) => {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     searchLessons(e.target.value);
@@ -1055,16 +1056,16 @@
             // ============================================================================
             onAuthStateChanged(auth, async (user) => {
                 if (!user) {
-                    window.location.href = '../index.html';
+                    window.location.href = "../index.html";
                     return;
                 }
 
                 state.currentUser = user;
 
                 // Get class info from sessionStorage
-                const classData = sessionStorage.getItem('currentClass');
+                const classData = sessionStorage.getItem("currentClass");
                 if (!classData) {
-                    window.location.href = '../index.html';
+                    window.location.href = "../index.html";
                     return;
                 }
 
@@ -1098,7 +1099,7 @@
                     const snapshot = await getDocs(lessonsRef);
 
                     container.innerHTML = "";
-                    state.allLessons = [];
+                    state.allLessons = []; // Clear and rebuild
 
                     if (snapshot.empty) {
                         container.innerHTML = `
@@ -1112,8 +1113,8 @@
 
                     snapshot.forEach((docSnap) => {
                         const lessonData = docSnap.data();
-                        state.allLessons.push({ id: docSnap.id, data: lessonData });
-                        
+                        state.allLessons.push({ id: docSnap.id, data: lessonData }); // Store for search
+
                         const card = document.createElement("div");
                         card.className = "item-card";
                         card.innerHTML = `
@@ -1192,7 +1193,8 @@
                         : null,
                     lessonNumber: document.getElementById("lesson-number").value || null,
                     week: document.getElementById("lesson-week").value || null,
-                    createdAt: new Date()
+                    createdAt: new Date(),
+                    attachments: [] // Initialize empty attachments array
                 };
 
                 try {
@@ -1213,7 +1215,7 @@
             });
 
             document.getElementById("btn-back-to-classes").addEventListener("click", () => {
-                window.location.href = '../index.html';
+                window.location.href = "../index.html";
             });
 
             document.getElementById("btn-delete-class").addEventListener("click", async () => {
@@ -1222,7 +1224,7 @@
                 if (confirm(`Delete "${state.currentClass.name}" and all its lessons?`)) {
                     try {
                         await deleteDoc(doc(db, "users", state.currentUser.uid, "classes", state.currentClass.id));
-                        window.location.href = '../index.html';
+                        window.location.href = "../index.html";
                     } catch (error) {
                         console.error("Delete class error:", error);
                         alert("Error deleting class");
@@ -1257,11 +1259,10 @@
                         )
                     );
 
-                    const noteData = noteDoc.exists() ? noteDoc.data() : {};
-                    setEditorContent(noteData.html || '');
+                    document.getElementById("note-content").value = noteDoc.exists() ? noteDoc.data().text || "" : "";
                 } catch (error) {
                     console.error("Error loading note:", error);
-                    setEditorContent('');
+                    document.getElementById("note-content").value = "";
                 }
 
                 showView("lessonDetail");
@@ -1288,8 +1289,7 @@
                             "note"
                         ),
                         {
-                            html: getEditorHTML(),
-                            text: getEditorPlainText(), // Also save plain text for search
+                            text: document.getElementById("note-content").value,
                             updatedAt: new Date()
                         }
                     );
@@ -1335,8 +1335,35 @@
             });
 
             // ============================================================================
-            // ATTACHMENTS
+            // CLOUDINARY ATTACHMENTS
             // ============================================================================
+            async function uploadToCloudinary(file) {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+                
+                // Add folder structure for organization
+                const folder = `notey/${state.currentUser.uid}/${state.currentClass.id}/${state.currentLesson.id}`;
+                formData.append("folder", folder);
+
+                const response = await fetch(CLOUDINARY_API_URL, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Upload failed");
+                }
+
+                return await response.json();
+            }
+
+            async function deleteFromCloudinary(publicId) {
+                // Note: Deletion from Cloudinary typically requires backend implementation
+                // with signed requests for security. For now, we'll just remove from Firestore.
+                console.warn("Cloudinary deletion requires backend implementation for security");
+            }
+
             async function loadAttachments() {
                 if (!state.currentLesson) return;
 
@@ -1344,43 +1371,86 @@
                 container.innerHTML = '<div class="muted">Loading files...</div>';
 
                 try {
-                    const attachRef = storageRef(
-                        storage,
-                        `users/${state.currentUser.uid}/classes/${state.currentClass.id}/lessons/${state.currentLesson.id}/`
+                    // Refresh lesson data to get latest attachments
+                    const lessonDoc = await getDoc(
+                        doc(
+                            db,
+                            "users",
+                            state.currentUser.uid,
+                            "classes",
+                            state.currentClass.id,
+                            "lessons",
+                            state.currentLesson.id
+                        )
                     );
-                    const filesList = await listAll(attachRef);
 
+                    const attachments = lessonDoc.data()?.attachments || [];
                     container.innerHTML = "";
 
-                    if (filesList.items.length === 0) {
+                    if (attachments.length === 0) {
                         container.innerHTML = '<div class="muted">No attachments yet</div>';
                         return;
                     }
 
-                    for (const item of filesList.items) {
-                        const url = await getDownloadURL(item);
+                    attachments.forEach((attachment) => {
                         const fileCard = document.createElement("div");
                         fileCard.className = "item-card";
-                        fileCard.innerHTML = `
-            <div class="item-card-title">📎 ${item.name}</div>
-            <div class="item-card-actions">
-              <a href="${url}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-sm" style="text-decoration: none;">
-                Download
-              </a>
-              <button class="btn-danger btn-sm delete-file" data-path="${item.fullPath}">
-                Delete
-              </button>
-            </div>
-          `;
-                        container.appendChild(fileCard);
-                    }
+                        
+                        // Determine file type icon
+                        let icon = "📎";
+                        const ext = attachment.fileName.split('.').pop().toLowerCase();
+                        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) icon = "🖼️";
+                        else if (['pdf'].includes(ext)) icon = "📄";
+                        else if (['doc', 'docx'].includes(ext)) icon = "📝";
+                        else if (['xls', 'xlsx'].includes(ext)) icon = "📊";
+                        else if (['zip', 'rar'].includes(ext)) icon = "📦";
 
+                        fileCard.innerHTML = `
+                            <div class="item-card-title">${icon} ${attachment.fileName}</div>
+                            <div class="item-card-meta">
+                                ${(attachment.fileSize / 1024).toFixed(2)} KB · 
+                                ${new Date(attachment.uploadedAt.seconds * 1000).toLocaleDateString()}
+                            </div>
+                            <div class="item-card-actions">
+                                <a href="${attachment.url}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-sm" style="text-decoration: none;">
+                                    Download
+                                </a>
+                                <button class="btn-danger btn-sm delete-file" data-public-id="${attachment.publicId}" data-file-name="${attachment.fileName}">
+                                    Delete
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(fileCard);
+                    });
+
+                    // Add delete listeners
                     document.querySelectorAll(".delete-file").forEach((btn) => {
                         btn.addEventListener("click", async (e) => {
-                            if (confirm("Delete this file?")) {
+                            const publicId = e.target.dataset.publicId;
+                            const fileName = e.target.dataset.fileName;
+                            
+                            if (confirm(`Delete ${fileName}?`)) {
                                 try {
-                                    const fileRef = storageRef(storage, e.target.dataset.path);
-                                    await deleteObject(fileRef);
+                                    // Remove from Firestore
+                                    const lessonRef = doc(
+                                        db,
+                                        "users",
+                                        state.currentUser.uid,
+                                        "classes",
+                                        state.currentClass.id,
+                                        "lessons",
+                                        state.currentLesson.id
+                                    );
+
+                                    await updateDoc(lessonRef, {
+                                        attachments: arrayRemove(
+                                            attachments.find(a => a.publicId === publicId)
+                                        )
+                                    });
+
+                                    // Note: Actual deletion from Cloudinary requires backend
+                                    await deleteFromCloudinary(publicId);
+                                    
                                     await loadAttachments();
                                 } catch (error) {
                                     console.error("Delete file error:", error);
@@ -1391,7 +1461,7 @@
                     });
                 } catch (error) {
                     console.error("Error loading attachments:", error);
-                    container.innerHTML = '<div class="muted">No attachments or error loading</div>';
+                    container.innerHTML = '<div class="muted">Error loading attachments</div>';
                 }
             }
 
@@ -1407,22 +1477,55 @@
                     return;
                 }
 
+                const progressContainer = document.getElementById("upload-progress");
+                const progressFill = document.getElementById("progress-fill");
+                progressContainer.classList.add("active");
+
                 try {
-                    const uploadPromises = [];
+                    const totalFiles = files.length;
+                    let uploadedCount = 0;
+
                     for (const file of files) {
-                        const path = `users/${state.currentUser.uid}/classes/${state.currentClass.id}/lessons/${state.currentLesson.id}/${file.name}`;
-                        const fileRef = storageRef(storage, path);
-                        uploadPromises.push(uploadBytes(fileRef, file));
+                        // Upload to Cloudinary
+                        const uploadResult = await uploadToCloudinary(file);
+
+                        // Save metadata to Firestore
+                        const lessonRef = doc(
+                            db,
+                            "users",
+                            state.currentUser.uid,
+                            "classes",
+                            state.currentClass.id,
+                            "lessons",
+                            state.currentLesson.id
+                        );
+
+                        await updateDoc(lessonRef, {
+                            attachments: arrayUnion({
+                                fileName: file.name,
+                                fileSize: file.size,
+                                fileType: file.type,
+                                url: uploadResult.secure_url,
+                                publicId: uploadResult.public_id,
+                                uploadedAt: new Date(),
+                                uploadedBy: state.currentUser.uid
+                            })
+                        });
+
+                        uploadedCount++;
+                        const progress = (uploadedCount / totalFiles) * 100;
+                        progressFill.style.width = `${progress}%`;
                     }
 
-                    await Promise.all(uploadPromises);
-                    alert(`${files.length} file(s) uploaded!`);
-
+                    alert(`${files.length} file(s) uploaded successfully!`);
                     document.getElementById("file-upload").value = "";
                     await loadAttachments();
                 } catch (error) {
                     console.error("Upload error:", error);
                     alert("Error uploading file(s): " + error.message);
+                } finally {
+                    progressContainer.classList.remove("active");
+                    progressFill.style.width = "0%";
                 }
             });
 
@@ -1466,7 +1569,7 @@
             }
 
             document.getElementById("btn-ai-summarize").addEventListener("click", async () => {
-                const notes = getEditorPlainText();
+                const notes = document.getElementById("note-content").value;
                 if (!notes.trim()) {
                     alert("Please write some notes first!");
                     return;
@@ -1479,7 +1582,7 @@
             });
 
             document.getElementById("btn-ai-quiz").addEventListener("click", async () => {
-                const notes = getEditorPlainText();
+                const notes = document.getElementById("note-content").value;
                 if (!notes.trim()) {
                     alert("Please write some notes first!");
                     return;
@@ -1492,7 +1595,7 @@
             });
 
             document.getElementById("btn-ai-explain").addEventListener("click", async () => {
-                const notes = getEditorPlainText();
+                const notes = document.getElementById("note-content").value;
                 if (!notes.trim()) {
                     alert("Please write some notes first!");
                     return;
@@ -1505,7 +1608,7 @@
             });
 
             document.getElementById("btn-ai-studyguide").addEventListener("click", async () => {
-                const notes = getEditorPlainText();
+                const notes = document.getElementById("note-content").value;
                 if (!notes.trim()) {
                     alert("Please write some notes first!");
                     return;
@@ -1517,7 +1620,7 @@
                 showAIOutput(result);
             });
 
-            console.log("Notey lessons page with rich text editor loaded successfully!");
+            console.log("Notey lessons page loaded successfully with Cloudinary integration!");
         </script>
     </body>
 </html>
