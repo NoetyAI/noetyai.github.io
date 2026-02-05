@@ -39,6 +39,25 @@
             transform: translate(-450px, 400px);
         }
 
+        #remove-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #ff4c4c;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        #remove-btn:hover {
+            background-color: #ff1a1a;
+        }
+
         @media (max-width: 1200px) {
             #counter {
                 font-size: 64px;
@@ -65,6 +84,7 @@
 </head>
 <body>
     <div id="counter">0</div>
+    <button id="remove-btn">Remove 1</button>
     <div id="offline-bar">YOU ARE OFFLINE!</div>
 
     <!-- Firebase -->
@@ -94,8 +114,10 @@
         const counterRef = ref(db, "counter");
         const counterEl = document.getElementById("counter");
         const offlineBar = document.getElementById("offline-bar");
+        const removeBtn = document.getElementById("remove-btn");
 
         let pendingIncrement = 0; // Store increments while offline
+        let pendingDecrement = 0; // Store decrements while offline
 
         function updateCounterDisplay(value) {
             counterEl.textContent = value;
@@ -105,19 +127,32 @@
             try {
                 const snapshot = await get(counterRef);
                 const current = snapshot.val() ?? 0;
-                const newValue = current + 1 + pendingIncrement;
+                const newValue = current + 1 + pendingIncrement - pendingDecrement;
                 await set(counterRef, newValue);
-                pendingIncrement = 0; // Reset pending after sync
+                pendingIncrement = 0;
+                pendingDecrement = 0;
             } catch (err) {
-                // If offline, keep increment locally
                 pendingIncrement++;
+            }
+        }
+
+        async function decrementCounter() {
+            try {
+                const snapshot = await get(counterRef);
+                const current = snapshot.val() ?? 0;
+                const newValue = current - 1 + pendingIncrement - pendingDecrement;
+                await set(counterRef, newValue);
+                pendingIncrement = 0;
+                pendingDecrement = 0;
+            } catch (err) {
+                pendingDecrement++;
             }
         }
 
         // Listen for realtime updates
         onValue(counterRef, (snapshot) => {
             const value = snapshot.val() ?? 0;
-            updateCounterDisplay(value + pendingIncrement);
+            updateCounterDisplay(value + pendingIncrement - pendingDecrement);
         });
 
         // Space bar increments counter
@@ -128,12 +163,17 @@
             }
         });
 
+        // Remove button decrements counter
+        removeBtn.addEventListener("click", () => {
+            decrementCounter();
+        });
+
         // Detect online/offline
         function updateOnlineStatus() {
             if (navigator.onLine) {
                 offlineBar.style.display = "none";
-                if (pendingIncrement > 0) {
-                    incrementCounter(); // Sync pending increments
+                if (pendingIncrement > 0 || pendingDecrement > 0) {
+                    incrementCounter(); // Sync pending increments and decrements
                 }
             } else {
                 offlineBar.style.display = "block";
