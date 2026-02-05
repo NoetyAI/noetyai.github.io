@@ -1,102 +1,150 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>High Five counter</title>
+<head>
+    <meta charset="UTF-8" />
+    <title>Realtime Space Counter</title>
 
-        <style>
-            html,
-            body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                width: 100%;
-            }
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
 
-            body {
-                background-image: url("background.jpg"); /* Replace with your landscape image */
-                background-size: cover; /* Ensures it fills screen proportionally */
-                background-position: center; /* Centers the image */
-                background-repeat: no-repeat;
-                font-family:
-                    system-ui,
-                    -apple-system,
-                    Segoe UI,
-                    Roboto,
-                    Arial,
-                    sans-serif;
-                display: flex;
-                align-items: flex-start; /* Start from top for easy offset */
-                justify-content: flex-end; /* Right side */
-            }
+        body {
+            background-image: url("background.jpg"); /* Replace with your landscape image */
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            font-family:
+                system-ui,
+                -apple-system,
+                Segoe UI,
+                Roboto,
+                Arial,
+                sans-serif;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
 
+        #counter {
+            font-size: 96px;
+            font-weight: 700;
+            color: #000000;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            user-select: none;
+            transform: translate(-450px, 400px);
+        }
+
+        @media (max-width: 1200px) {
             #counter {
-                font-size: 96px;
-                font-weight: 700;
-                color: #000000;
-                text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-                user-select: none;
-                transform: translate(-435px, 400px);
+                font-size: 64px;
+                margin-top: 50px;
+                margin-right: 50px;
             }
+        }
 
-            /* Make counter responsive o smaller screens */
-            @media (max-width: 1200px) {
-                #counter {
-                    font-size: 64px;
-                    margin-top: 50px;
-                    margin-right: 30px;
-                }
+        /* Offline bar */
+        #offline-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: red;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            padding: 10px 0;
+            display: none; /* Hidden by default */
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">0</div>
+    <div id="offline-bar">YOU ARE OFFLINE!</div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import {
+            getDatabase,
+            ref,
+            set,
+            get,
+            onValue
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCPU33ZcxWoS9NUaDEYJvNcB8FvVtdBTrg",
+            authDomain: "notey-4455f.firebaseapp.com",
+            databaseURL: "https://notey-4455f-default-rtdb.firebaseio.com",
+            projectId: "notey-4455f",
+            storageBucket: "notey-4455f.firebasestorage.app",
+            messagingSenderId: "554664934050",
+            appId: "1:554664934050:web:2e0a56b2dd0823cafa35fb",
+            measurementId: "G-L0RJKWNMN7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const counterRef = ref(db, "counter");
+        const counterEl = document.getElementById("counter");
+        const offlineBar = document.getElementById("offline-bar");
+
+        let pendingIncrement = 0; // Store increments while offline
+
+        function updateCounterDisplay(value) {
+            counterEl.textContent = value;
+        }
+
+        async function incrementCounter() {
+            try {
+                const snapshot = await get(counterRef);
+                const current = snapshot.val() ?? 0;
+                const newValue = current + 1 + pendingIncrement;
+                await set(counterRef, newValue);
+                pendingIncrement = 0; // Reset pending after sync
+            } catch (err) {
+                // If offline, keep increment locally
+                pendingIncrement++;
             }
-        </style>
-    </head>
-    <body>
-        <div id="counter">0</div>
+        }
 
-        <!-- Firebase -->
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-            import {
-                getDatabase,
-                ref,
-                set,
-                get,
-                onValue
-            } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        // Listen for realtime updates
+        onValue(counterRef, (snapshot) => {
+            const value = snapshot.val() ?? 0;
+            updateCounterDisplay(value + pendingIncrement);
+        });
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyCPU33ZcxWoS9NUaDEYJvNcB8FvVtdBTrg",
-                authDomain: "notey-4455f.firebaseapp.com",
-                databaseURL: "https://notey-4455f-default-rtdb.firebaseio.com",
-                projectId: "notey-4455f",
-                storageBucket: "notey-4455f.firebasestorage.app",
-                messagingSenderId: "554664934050",
-                appId: "1:554664934050:web:2e0a56b2dd0823cafa35fb",
-                measurementId: "G-L0RJKWNMN7"
-            };
+        // Space bar increments counter
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space") {
+                e.preventDefault();
+                incrementCounter();
+            }
+        });
 
-            const app = initializeApp(firebaseConfig);
-            const db = getDatabase(app);
-            const counterRef = ref(db, "counter");
-
-            const counterEl = document.getElementById("counter");
-
-            // Listen for realtime updates
-            onValue(counterRef, (snapshot) => {
-                const value = snapshot.val() ?? 0;
-                counterEl.textContent = value;
-            });
-
-            // Space bar increments counter
-            document.addEventListener("keydown", async (e) => {
-                if (e.code === "Space") {
-                    e.preventDefault();
-
-                    const snapshot = await get(counterRef);
-                    const current = snapshot.val() ?? 0;
-
-                    set(counterRef, current + 1);
+        // Detect online/offline
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineBar.style.display = "none";
+                if (pendingIncrement > 0) {
+                    incrementCounter(); // Sync pending increments
                 }
-            });
-        </script>
-    </body>
+            } else {
+                offlineBar.style.display = "block";
+            }
+        }
+
+        window.addEventListener("online", updateOnlineStatus);
+        window.addEventListener("offline", updateOnlineStatus);
+
+        // Initial check
+        updateOnlineStatus();
+    </script>
+</body>
 </html>
