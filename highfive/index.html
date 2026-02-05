@@ -36,25 +36,41 @@
       top: 18px;
       right: 18px;
       display:flex;
-      gap:10px;
+      gap:12px;
       align-items:center;
       background: rgba(255,255,255,0.9);
       color:#000;
-      padding:8px 12px;
+      padding:8px 14px;
       border-radius:999px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.12);
       font-weight:700;
       font-size:13px;
       z-index:12000;
     }
-    .status-dot{
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      background:var(--bad);
-      flex:0 0 12px;
-      box-shadow:0 0 8px rgba(0,0,0,0.12);
+    
+    /* WiFi bars container */
+    .wifi-bars{
+      display:flex;
+      align-items:flex-end;
+      gap:2px;
+      height:18px;
+      width:20px;
     }
+    .wifi-bar{
+      flex:1;
+      background: var(--muted);
+      border-radius:1px;
+      transition: background 0.3s ease, opacity 0.3s ease;
+      opacity: 0.25;
+    }
+    .wifi-bar.active{
+      opacity: 1;
+    }
+    .wifi-bar:nth-child(1){ height: 25%; }
+    .wifi-bar:nth-child(2){ height: 50%; }
+    .wifi-bar:nth-child(3){ height: 75%; }
+    .wifi-bar:nth-child(4){ height: 100%; }
+    
     .status-text { font-size:13px; color: #000; }
 
     /* big centered number */
@@ -126,7 +142,12 @@
 </head>
 <body>
   <div class="status-badge" id="statusBadge" aria-live="polite">
-    <div class="status-dot" id="statusDot" title="connection status"></div>
+    <div class="wifi-bars" id="wifiBars" title="connection strength">
+      <div class="wifi-bar"></div>
+      <div class="wifi-bar"></div>
+      <div class="wifi-bar"></div>
+      <div class="wifi-bar"></div>
+    </div>
     <div>
       <div class="status-text" id="statusText">Connecting…</div>
       <div style="font-size:11px;color:rgba(0,0,0,0.6)" id="latText">-- ms</div>
@@ -178,7 +199,7 @@ const goalPopupShownRef = db.ref('/goalPopupShown');
 const countDisplay = document.getElementById('countDisplay');
 const localInfo = document.getElementById('localInfo');
 const offlineBar = document.getElementById('offlineBar');
-const statusDot = document.getElementById('statusDot');
+const wifiBars = document.getElementById('wifiBars');
 const statusText = document.getElementById('statusText');
 const latText = document.getElementById('latText');
 const goalInput = document.getElementById('goalInput');
@@ -195,7 +216,13 @@ let isConnected = false;
 let currentGoal = null;
 let confettiInterval = null;
 let goalPopupShown = false;
-let lastMeasuredLatency = null;
+
+/* ---------- Latency tracking ---------- */
+let samples = [];
+const MAX_SAMPLES = 5;
+let currentBars = 2;
+let retrying = false;
+const TEST_URL = "https://noteyai.github.io/highfive";
 
 /* ---------- Render UI ---------- */
 function render(){
@@ -259,7 +286,9 @@ function stopConfetti(){
 
 /* ---------- Connection tracking + queued application ---------- */
 connectedRef.on('value', snap => {
+  const wasConnected = isConnected;
   isConnected = !!snap.val();
+  
   updateStatusIndicator();
   render();
 
@@ -380,64 +409,132 @@ setGoalBtn.addEventListener('click', ()=>{
   });
 });
 
-/* ---------- Latency measurement and status colors ---------- */
+/* ---------- Connection Monitoring with Ping ---------- */
+function latencyToBars(ms) {
+  if (ms < 100) return 4;
+  if (ms < 200) return 3;
+  if (ms < 300) return 2;
+  // Anything 300+ stays at 1 bar until complete disconnect
+  return 1;
+}
+
+async function pingUntilLoaded() {
+  const url = TEST_URL + "?ping=" + Date.now();
+  const start = performance.now();
+  try {
+    await fetch(url, { cache: "no-store", mode: "no-cors" });
+    const latency = performance.now() - start;
+    
+    // No more immediate retry based on latency - let high latency show as 1 bar
+    retrying = false;
+    samples.push(latency);
+    if (samples.length > MAX_SAMPLES) samples.shift();
+    
+    const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+    const targetBars = latencyToBars(avg);
+    
+    // Smooth bar change ±1
+    if (targetBars > currentBars) currentBars++;
+    else if (targetBars < currentBars) currentBars--;
+    
+    updateStatusIndicator(avg);
+  } catch {
+    // Only retry on complete connection failure
+    retrying = true;
+    currentBars = 0; // No bars on complete disconnect
+    samples = []; // Clear samples on disconnect
+    updateStatusIndicator(null);
+    requestAnimationFrame(pingUntilLoaded);
+  }
+}
+
+function startConnectionMonitor() {
+  if (!retrying) pingUntilLoaded();
+}
+
+/* ---------- Status indicator with WiFi bars ---------- */
 function updateStatusIndicator(latencyMs){
+  const bars = wifiBars.querySelectorAll('.wifi-bar');
+  
   if (!isConnected) {
-    statusDot.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bad');
+    // No bars when disconnected
+    bars.forEach(bar => {
+      bar.classList.remove('active');
+      bar.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bad');
+    });
     statusText.textContent = 'Disconnected';
     latText.textContent = '-- ms';
     return;
   }
-  lastMeasuredLatency = (typeof latencyMs === 'number') ? Math.round(latencyMs) : lastMeasuredLatency;
-  // thresholds (ms): <250 green, 250-800 yellow, >800 red (but still "connected")
-  if (lastMeasuredLatency === null) {
-    statusDot.style.background = 'gray';
-    statusText.textContent = 'Connected';
+  
+  // If retrying or no latency data
+  if (latencyMs === null || latencyMs === undefined) {
+    statusText.textContent = 'Measuring...';
     latText.textContent = '-- ms';
+    // Show current bars level while measuring
+    bars.forEach((bar, index) => {
+      if (index < currentBars) {
+        bar.classList.add('active');
+        bar.style.background = '#999';
+      } else {
+        bar.classList.remove('active');
+        bar.style.background = getComputedStyle(document.documentElement).getPropertyValue('--muted');
+      }
+    });
     return;
   }
-  latText.textContent = `${lastMeasuredLatency} ms`;
-  if (lastMeasuredLatency < 250) {
-    statusDot.style.background = getComputedStyle(document.documentElement).getPropertyValue('--good');
+  
+  // Round to 1 decimal place for display
+  const roundedLatency = Math.round(latencyMs * 10) / 10;
+  latText.textContent = `${roundedLatency} ms`;
+  
+  // Determine color and status text based on latency
+  let barColor = '';
+  
+  if (latencyMs < 100) {
+    // 4 bars - Excellent
+    barColor = getComputedStyle(document.documentElement).getPropertyValue('--good');
+    statusText.textContent = 'Excellent';
+  } else if (latencyMs < 200) {
+    // 3 bars - Good
+    barColor = getComputedStyle(document.documentElement).getPropertyValue('--good');
     statusText.textContent = 'Good';
-  } else if (lastMeasuredLatency < 800) {
-    statusDot.style.background = getComputedStyle(document.documentElement).getPropertyValue('--warn');
-    statusText.textContent = 'Low';
+  } else if (latencyMs < 300) {
+    // 2 bars - Fair
+    barColor = getComputedStyle(document.documentElement).getPropertyValue('--warn');
+    statusText.textContent = 'Fair';
   } else {
-    statusDot.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bad');
+    // 1 bar - Slow (300+)
+    barColor = getComputedStyle(document.documentElement).getPropertyValue('--bad');
     statusText.textContent = 'Slow';
   }
-}
-
-/* measure latency by doing a lightweight read and timing the callback.
-   This is approximate but works without extra DB writes. */
-function measureLatencyOnce(){
-  const t0 = performance.now();
-  // Use a small once read on countRef
-  countRef.once('value', ()=> {
-    const t1 = performance.now();
-    const ms = t1 - t0;
-    updateStatusIndicator(ms);
-  }, err => {
-    // on error, mark disconnected and show
-    updateStatusIndicator(null);
+  
+  // Update bars - use currentBars for smooth transitions
+  bars.forEach((bar, index) => {
+    if (index < currentBars) {
+      bar.classList.add('active');
+      bar.style.background = barColor;
+    } else {
+      bar.classList.remove('active');
+      bar.style.background = getComputedStyle(document.documentElement).getPropertyValue('--muted');
+    }
   });
 }
 
-/* run latency checks periodically while connected */
-setInterval(()=>{
-  if (isConnected) measureLatencyOnce();
-  else updateStatusIndicator(null);
-}, 3000);
-
-/* initial status update */
+/* ---------- Initial status update ---------- */
 updateStatusIndicator(null);
 
-/* ---------- Initial render and optional seeding ---------- */
+/* ---------- Start connection monitoring ---------- */
+startConnectionMonitor();
+setInterval(startConnectionMonitor, 5000);
+
+/* ---------- Initial render ---------- */
 render();
-/* optional: ensure count exists on DB first-time (commented out)
-countRef.once('value').then(s=>{ if (s.val()===null) countRef.set(0); });
-*/
+
+/* ---------- Cleanup on page unload ---------- */
+window.addEventListener('beforeunload', () => {
+  retrying = false;
+});
 </script>
 </body>
 </html>
