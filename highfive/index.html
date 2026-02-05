@@ -1,257 +1,288 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Felix! | High Five counter</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            background: #000;
-            overflow: hidden;
-        }
-        /* Container for background image */
-        .background-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        .background-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        /* Counter positioned relative to the image */
-        #counter {
-            position: absolute;
-            top: 62%;
-            left: 62.4%;
-            transform: translate(-50%, -50%);
-            font-size: 6vw; /* Use viewport width for consistent sizing */
-            font-weight: 700;
-            color: #000;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            user-select: none;
-            pointer-events: none;
-        }
-        @media (max-width: 1200px) {
-            #counter {
-                font-size: 8vw;
-                top: 62%;
-                left: 72%;
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Felix! | High Five counter</title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    Segoe UI,
+                    Roboto,
+                    Arial,
+                    sans-serif;
+                background: #000;
+                overflow: hidden;
             }
-        }
-        /* Remove button */
-        #remove-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 24px;
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #ff4c4c;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-        }
-        #remove-btn:hover {
-            background-color: #ff1a1a;
-        }
-        /* Offline bar */
-        #offline-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: red;
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            padding: 10px 0;
-            display: none;
-            z-index: 1000;
-        }
-    </style>
-</head>
-<body>
-    <div class="background-container">
-        <img src="background.jpg" alt="Background" />
-        <div id="counter">0</div>
-    </div>
-    <button id="remove-btn">Remove 1</button>
-    <div id="offline-bar">YOU ARE OFFLINE!</div>
+            /* Container for background image */
+            .background-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            .background-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            /* Counter positioned relative to the image */
+            #counter {
+                position: absolute;
+                top: 62%;
+                left: 62.4%;
+                transform: translate(-50%, -50%);
+                font-size: 6vw; /* Use viewport width for consistent sizing */
+                font-weight: 700;
+                color: #000;
+                text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+                user-select: none;
+                pointer-events: none;
+            }
+            @media (max-width: 1200px) {
+                #counter {
+                    font-size: 8vw;
+                    top: 62%;
+                    left: 72%;
+                }
+            }
+            /* Remove button */
+            #remove-btn {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 18px;
+                font-weight: bold;
+                background-color: #ff4c4c;
+                border: none;
+                border-radius: 8px;
+                color: white;
+                cursor: pointer;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                z-index: 100;
+            }
+            #remove-btn:hover {
+                background-color: #ff1a1a;
+            }
+            /* Offline bar */
+            #offline-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: red;
+                color: white;
+                text-align: center;
+                font-weight: bold;
+                padding: 10px 0;
+                display: none;
+                z-index: 1000;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="background-container">
+            <img src="background.jpg" alt="Background" />
+            <div id="counter">0</div>
+        </div>
+        <button id="remove-btn">Remove 1</button>
+        <div id="offline-bar">YOU ARE OFFLINE!</div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <script>
-        // Firebase configuration - REPLACE WITH YOUR CONFIG
-const firebaseConfig = {
+        <script>
+            // Firebase configuration - REPLACE WITH YOUR CONFIG
+            const firebaseConfig = {
+                apiKey: "AIzaSyCPU33ZcxWoS9NUaDEYJvNcB8FvVtdBTrg",
 
-  apiKey: "AIzaSyCPU33ZcxWoS9NUaDEYJvNcB8FvVtdBTrg",
+                authDomain: "notey-4455f.firebaseapp.com",
 
-  authDomain: "notey-4455f.firebaseapp.com",
+                databaseURL: "https://notey-4455f-default-rtdb.firebaseio.com",
 
-  databaseURL: "https://notey-4455f-default-rtdb.firebaseio.com",
+                projectId: "notey-4455f",
 
-  projectId: "notey-4455f",
+                storageBucket: "notey-4455f.firebasestorage.app",
 
-  storageBucket: "notey-4455f.firebasestorage.app",
+                messagingSenderId: "554664934050",
 
-  messagingSenderId: "554664934050",
+                appId: "1:554664934050:web:2e0a56b2dd0823cafa35fb",
 
-  appId: "1:554664934050:web:2e0a56b2dd0823cafa35fb",
+                measurementId: "G-L0RJKWNMN7"
+            };
 
-  measurementId: "G-L0RJKWNMN7"
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const database = firebase.database();
+            const counterRef = database.ref("counter");
 
-};
+            // State management
+            let localCounter = 0;
+            let isOnline = navigator.onLine;
+            let lastSyncTime = Date.now();
+            let offlineTimeAccumulated = 0;
+            let offlineChanges = 0; // Track incremental changes while offline
+            let lastKnownFirebaseValue = 0; // Last value we got from Firebase
 
+            // DOM elements
+            const counterDisplay = document.getElementById("counter");
+            const removeBtn = document.getElementById("remove-btn");
+            const offlineBar = document.getElementById("offline-bar");
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const counterRef = database.ref('counter');
+            // Update counter display
+            function updateDisplay() {
+                counterDisplay.textContent = localCounter;
+            }
 
-        // State management
-        let localCounter = 0;
-        let isOnline = navigator.onLine;
-        let lastSyncTime = Date.now();
-        let offlineTimeAccumulated = 0;
+            // Sync with Firebase
+            function syncWithFirebase(forceUpdate = false) {
+                if (!isOnline) return;
 
-        // DOM elements
-        const counterDisplay = document.getElementById('counter');
-        const removeBtn = document.getElementById('remove-btn');
-        const offlineBar = document.getElementById('offline-bar');
+                counterRef
+                    .once("value")
+                    .then((snapshot) => {
+                        const firebaseCounter = snapshot.val() || 0;
 
-        // Update counter display
-        function updateDisplay() {
-            counterDisplay.textContent = localCounter;
-        }
+                        if (forceUpdate) {
+                            // Initial load - just use Firebase value
+                            lastKnownFirebaseValue = firebaseCounter;
+                            localCounter = firebaseCounter;
+                            offlineChanges = 0;
+                            updateDisplay();
+                        } else if (offlineChanges !== 0) {
+                            // We have offline changes to apply
+                            const newValue = firebaseCounter + offlineChanges;
+                            localCounter = newValue;
+                            lastKnownFirebaseValue = newValue;
 
-        // Sync with Firebase
-        function syncWithFirebase(forceUpdate = false) {
-            if (!isOnline) return;
+                            // Push the new total to Firebase
+                            counterRef
+                                .set(newValue)
+                                .then(() => {
+                                    offlineChanges = 0; // Reset after successful sync
+                                })
+                                .catch((error) => {
+                                    console.error("Error updating counter:", error);
+                                });
 
-            counterRef.once('value')
-                .then(snapshot => {
+                            updateDisplay();
+                        } else {
+                            // No offline changes, just update from Firebase
+                            lastKnownFirebaseValue = firebaseCounter;
+                            localCounter = firebaseCounter;
+                            updateDisplay();
+                        }
+
+                        lastSyncTime = Date.now();
+                    })
+                    .catch((error) => {
+                        console.error("Error syncing with Firebase:", error);
+                    });
+            }
+
+            // Listen for Firebase changes
+            counterRef.on("value", (snapshot) => {
+                if (isOnline && offlineChanges === 0) {
+                    // Only update from Firebase if we don't have pending offline changes
                     const firebaseCounter = snapshot.val() || 0;
-                    
-                    // If Firebase has a higher number, use it
-                    // If local has a higher number due to offline changes, use local
-                    if (forceUpdate || firebaseCounter > localCounter) {
+
+                    if (firebaseCounter !== localCounter) {
+                        lastKnownFirebaseValue = firebaseCounter;
                         localCounter = firebaseCounter;
                         updateDisplay();
-                    } else if (localCounter > firebaseCounter) {
-                        // Push local changes to Firebase
-                        counterRef.set(localCounter);
                     }
-                    
-                    lastSyncTime = Date.now();
-                })
-                .catch(error => {
-                    console.error('Error syncing with Firebase:', error);
-                });
-        }
-
-        // Listen for Firebase changes
-        counterRef.on('value', (snapshot) => {
-            if (isOnline) {
-                const firebaseCounter = snapshot.val() || 0;
-                
-                // Only update if Firebase value is different and we're not in the middle of an update
-                if (firebaseCounter !== localCounter) {
-                    // Take the higher value to avoid conflicts
-                    localCounter = Math.max(localCounter, firebaseCounter);
-                    updateDisplay();
                 }
-            }
-        });
+            });
 
-        // Add to counter (spacebar)
-        function incrementCounter() {
-            localCounter++;
-            updateDisplay();
-            
-            if (isOnline) {
-                counterRef.set(localCounter)
-                    .catch(error => console.error('Error updating counter:', error));
-            }
-        }
-
-        // Remove from counter (button)
-        function decrementCounter() {
-            if (localCounter > 0) {
-                localCounter--;
+            // Add to counter (spacebar)
+            function incrementCounter() {
+                localCounter++;
                 updateDisplay();
-                
+
                 if (isOnline) {
-                    counterRef.set(localCounter)
-                        .catch(error => console.error('Error updating counter:', error));
+                    counterRef.set(localCounter).catch((error) => console.error("Error updating counter:", error));
+                } else {
+                    // Track the incremental change while offline
+                    offlineChanges++;
                 }
             }
-        }
 
-        // Handle online/offline status
-        function updateOnlineStatus() {
-            const wasOffline = !isOnline;
-            isOnline = navigator.onLine;
-            
-            if (isOnline) {
-                offlineBar.style.display = 'none';
-                
-                // If we just came back online, sync with Firebase
-                if (wasOffline) {
-                    console.log('Back online - syncing...');
+            // Remove from counter (button)
+            function decrementCounter() {
+                if (localCounter > 0) {
+                    localCounter--;
+                    updateDisplay();
+
+                    if (isOnline) {
+                        counterRef.set(localCounter).catch((error) => console.error("Error updating counter:", error));
+                    } else {
+                        // Track the incremental change while offline
+                        offlineChanges--;
+                    }
+                }
+            }
+
+            // Handle online/offline status
+            function updateOnlineStatus() {
+                const wasOffline = !isOnline;
+                isOnline = navigator.onLine;
+
+                if (isOnline) {
+                    offlineBar.style.display = "none";
+
+                    // If we just came back online, sync with Firebase
+                    if (wasOffline) {
+                        console.log("Back online - syncing...");
+                        syncWithFirebase();
+                    }
+                } else {
+                    offlineBar.style.display = "block";
+                    offlineTimeAccumulated += Date.now() - lastSyncTime;
+                }
+            }
+
+            // Event listeners
+            window.addEventListener("online", updateOnlineStatus);
+            window.addEventListener("offline", updateOnlineStatus);
+
+            // Spacebar to increment
+            document.addEventListener("keydown", (e) => {
+                if (e.code === "Space") {
+                    e.preventDefault();
+                    incrementCounter();
+                }
+            });
+
+            // Remove button
+            removeBtn.addEventListener("click", decrementCounter);
+
+            // Periodic sync (every 5 seconds when online)
+            setInterval(() => {
+                if (isOnline) {
                     syncWithFirebase();
                 }
-            } else {
-                offlineBar.style.display = 'block';
-                offlineTimeAccumulated += Date.now() - lastSyncTime;
-            }
-        }
+            }, 5000);
 
-        // Event listeners
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
+            // Initial setup
+            updateOnlineStatus();
+            syncWithFirebase(true);
 
-        // Spacebar to increment
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                incrementCounter();
-            }
-        });
-
-        // Remove button
-        removeBtn.addEventListener('click', decrementCounter);
-
-        // Periodic sync (every 5 seconds when online)
-        setInterval(() => {
-            if (isOnline) {
-                syncWithFirebase();
-            }
-        }, 5000);
-
-        // Initial setup
-        updateOnlineStatus();
-        syncWithFirebase(true);
-
-        // Handle visibility change (when tab becomes visible again)
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && isOnline) {
-                syncWithFirebase();
-            }
-        });
-    </script>
-</body>
+            // Handle visibility change (when tab becomes visible again)
+            document.addEventListener("visibilitychange", () => {
+                if (!document.hidden && isOnline) {
+                    syncWithFirebase();
+                }
+            });
+        </script>
+    </body>
 </html>
